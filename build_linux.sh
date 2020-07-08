@@ -1,6 +1,8 @@
 set -e
 
-script_dir="$(dirname "$0")"
+cd "$(dirname "$0")"
+
+script_dir="$(pwd)"
 build_dir="$script_dir/build"
 code_dir="$script_dir/code"
 
@@ -12,4 +14,4 @@ fi
 mkdir "$build_dir"
 
 cd "$build_dir"
-c++ -o "imageviewer" "$code_dir/linux_imageviewer.cpp"
+c++ -o "imageviewer" -l SDL2 "$code_dir/linux_imageviewer.cpp"
