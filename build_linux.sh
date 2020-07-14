@@ -14,4 +14,4 @@ fi
 mkdir "$build_dir"
 
 cd "$build_dir"
-c++ -o "imageviewer" -l SDL2 "$code_dir/linux_imageviewer.cpp"
+c++ -g -o "imageviewer" -l SDL2 "$code_dir/linux_imageviewer.cpp"
