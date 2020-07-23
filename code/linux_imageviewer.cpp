@@ -45,14 +45,15 @@ int main()
 		MAP_PRIVATE | MAP_ANONYMOUS,
 		-1,
 		0);
-	if (memory == (void*)-1)
+	if (memory == (void*)(-1))
 	{
 		return Error::mmap;
 	}
 
+
 	SDL_Texture* texture = SDL_CreateTexture(
 		renderer,
-		SDL_PIXELFORMAT_RGBA8888,
+		SDL_PIXELFORMAT_ARGB8888,
 		SDL_TEXTUREACCESS_STATIC,
 		1024, 768);
 	if (texture == nullptr)
@@ -91,6 +92,8 @@ int main()
 		{
 			return Error::SDL_RenderCopy;
 		}
+
+		SDL_RenderPresent(renderer);
 	}
 
 	SDL_DestroyTexture(texture);
