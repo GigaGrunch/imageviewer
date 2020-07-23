@@ -15,3 +15,8 @@ mkdir "$build_dir"
 
 cd "$build_dir"
 c++ -g -o "imageviewer" -l SDL2 "$code_dir/linux_imageviewer.cpp"
+
+if [ "$1" == "--run" ]
+then
+	"$build_dir/imageviewer"
+fi
