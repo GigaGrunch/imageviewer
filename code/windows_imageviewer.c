@@ -10,7 +10,7 @@ typedef uint8_t u8;
 
 typedef enum
 {
-	Error_mmap,
+	Error_malloc,
 
 	Error_SDL_Init,
 	Error_SDL_CreateWindow,
@@ -34,9 +34,20 @@ typedef struct
 int width = 1024;
 int height = 768;
 
+int internal_main(void);
+
 int WinMain(void)
 {
 	printf("hello world!\n");
+
+	int result = internal_main();
+
+	printf("bye bye\n");
+	return result;
+}
+
+int internal_main(void)
+{
 	if (0 != SDL_Init(SDL_INIT_VIDEO))
 	{
 		return Error_SDL_Init;
@@ -60,6 +71,10 @@ int WinMain(void)
 	}
 
 	Pixel* pixels = malloc(width * height * sizeof(Pixel));
+	if (NULL == pixels)
+	{
+		return Error_malloc;
+	}
 
 	{
 		Pixel* currentPixel = pixels;
@@ -145,6 +160,5 @@ int WinMain(void)
 		SDL_RenderPresent(renderer);
 	}
 
-	printf("bye bye\n");
 	return 0;
 }
