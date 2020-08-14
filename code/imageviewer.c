@@ -10,11 +10,6 @@ int imageviewer_main(void)
 {
 	printf("now entering platform independent land\n");
 
-	if (0 != SDL_Init(SDL_INIT_VIDEO))
-	{
-		return Error_SDL_Init;
-	}
-
 	SDL_Window* window = SDL_CreateWindow(
 		"Image Viewer",
 		SDL_WINDOWPOS_UNDEFINED,
