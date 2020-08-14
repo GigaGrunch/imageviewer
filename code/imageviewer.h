@@ -6,7 +6,7 @@ typedef uint8_t u8;
 
 typedef enum
 {
-	Error_malloc,
+	Error_malloc = 1,
 
 	Error_SDL_Init,
 	Error_SDL_CreateWindow,
