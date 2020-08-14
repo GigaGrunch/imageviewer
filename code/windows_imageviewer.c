@@ -1,8 +1,12 @@
 #pragma warning(push, 0)
-#include "windows.h"
-#include "../../SDL/include/SDL.h"
+#include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include "../../SDL/include/SDL.h"
+#include "windows.h"
 #pragma warning(pop)
+
+typedef uint8_t u8;
 
 typedef enum
 {
@@ -17,11 +21,19 @@ typedef enum
 	Error_SDL_UpdateTexture,
 } Error;
 
-int CALLBACK WinMain(
-    HINSTANCE   hInstance,
-    HINSTANCE   hPrevInstance,
-    LPSTR       lpCmdLine,
-    int         nCmdShow)
+int width = 1024;
+int height = 786;
+int pixelSize = 4;
+
+typedef struct
+{
+	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
+} Pixel;
+
+int WinMain(void)
 {
 	printf("hello world!\n");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -33,7 +45,7 @@ int CALLBACK WinMain(
 		"Image Viewer",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		1024, 768,
+		width, height,
 		SDL_WINDOW_RESIZABLE);
 	if (window == NULL)
 	{
@@ -44,6 +56,60 @@ int CALLBACK WinMain(
 	if (renderer == NULL)
 	{
 		return Error_SDL_CreateRenderer;
+	}
+
+	Pixel* pixels = malloc(width * height * sizeof(Pixel));
+
+	{
+		Pixel* currentPixel = pixels;
+		for (int y = 0; y < height; ++y)
+		{
+			for (int x = 0; x < width; ++x)
+			{
+				switch (y % 3)
+				{
+					case 0:
+					{
+						currentPixel->r = 255;
+						currentPixel->g = 0;
+						currentPixel->b = 0;
+						break;
+					}
+					case 1:
+					{
+						currentPixel->r = 0;
+						currentPixel->g = 255;
+						currentPixel->b = 0;
+						break;
+					}
+					case 2:
+					{
+						currentPixel->r = 0;
+						currentPixel->g = 0;
+						currentPixel->b = 255;
+						break;
+					}
+				}
+				
+				currentPixel->a = 255;
+				++currentPixel;
+			}
+		}
+	}
+
+	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, width, height);
+	if (texture == NULL)
+	{
+		return Error_SDL_CreateTexture;
+	}
+
+	if (0 != SDL_UpdateTexture(
+		texture,
+		NULL, // rect
+		pixels,
+		width * sizeof(Pixel))) // pitch
+	{
+		return Error_SDL_UpdateTexture;
 	}
 
 	bool app_running = true;
@@ -63,6 +129,17 @@ int CALLBACK WinMain(
 				app_running = false;
 			}
 		}
+
+		if (0 != SDL_RenderCopy(
+			renderer,
+			texture,
+			NULL, // srcrect
+			NULL)) // dstrect
+		{
+			return Error_SDL_RenderCopy;
+		}
+
+		SDL_RenderPresent(renderer);
 	}
 
 	printf("bye bye\n");
