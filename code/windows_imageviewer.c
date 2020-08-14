@@ -21,22 +21,23 @@ typedef enum
 	Error_SDL_UpdateTexture,
 } Error;
 
-int width = 1024;
-int height = 786;
-int pixelSize = 4;
-
 typedef struct
 {
-	u8 r;
-	u8 g;
-	u8 b;
+	// I actually don't know, why these are inversed.
+	// Something, something, endianness.
 	u8 a;
+	u8 b;
+	u8 g;
+	u8 r;
 } Pixel;
+
+int width = 1024;
+int height = 768;
 
 int WinMain(void)
 {
 	printf("hello world!\n");
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	if (0 != SDL_Init(SDL_INIT_VIDEO))
 	{
 		return Error_SDL_Init;
 	}
@@ -47,13 +48,13 @@ int WinMain(void)
 		SDL_WINDOWPOS_UNDEFINED,
 		width, height,
 		SDL_WINDOW_RESIZABLE);
-	if (window == NULL)
+	if (NULL == window)
 	{
 		return Error_SDL_CreateWindow;
 	}
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-	if (renderer == NULL)
+	if (NULL == renderer)
 	{
 		return Error_SDL_CreateRenderer;
 	}
@@ -91,8 +92,12 @@ int WinMain(void)
 		}
 	}
 
-	SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, width, height);
-	if (texture == NULL)
+	SDL_Texture* texture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_STATIC,
+		width, height);
+	if (NULL == texture)
 	{
 		return Error_SDL_CreateTexture;
 	}
@@ -114,14 +119,14 @@ int WinMain(void)
 	while (app_running)
 	{
 		SDL_Event event[1] = {0};
-		if (SDL_WaitEvent(event) == 0)
+		if (0 == SDL_WaitEvent(event))
 		{
 			return Error_SDL_WaitEvent;
 		}
 
-		if (event->type == SDL_WINDOWEVENT)
+		if (SDL_WINDOWEVENT == event->type)
 		{
-			if (event->window.event == SDL_WINDOWEVENT_CLOSE)
+			if (SDL_WINDOWEVENT_CLOSE == event->window.event)
 			{
 				printf("window event: SDL_WINDOWEVENT_CLOSE\n");
 				app_running = false;

@@ -21,10 +21,12 @@ typedef enum
 
 typedef struct
 {
-	u8 r;
-	u8 g;
-	u8 b;
+	// I actually don't know, why these are inversed.
+	// Something, something, endianness.
 	u8 a;
+	u8 b;
+	u8 g;
+	u8 r;
 } Pixel;
 
 int width = 1024;
@@ -32,8 +34,8 @@ int height = 768;
 
 int main(void)
 {
-	SDL_Log("hello world!");
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	printf("hello world!\n");
+	if (0 != SDL_Init(SDL_INIT_VIDEO))
 	{
 		return Error_SDL_Init;
 	}
@@ -44,68 +46,106 @@ int main(void)
 		SDL_WINDOWPOS_UNDEFINED,
 		width, height,
 		SDL_WINDOW_RESIZABLE);
-	if (window == NULL)
+	if (NULL == window)
 	{
 		return Error_SDL_CreateWindow;
 	}
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-	if (renderer == NULL)
+	if (NULL == renderer)
 	{
 		return Error_SDL_CreateRenderer;
 	}
 
-	void* memory = mmap(
+	Pixel* pixels = mmap(
 		NULL,
 		width * height * sizeof(Pixel),
 		PROT_READ | PROT_WRITE,
 		MAP_PRIVATE | MAP_ANONYMOUS,
 		-1,
 		0);
-	if (memory == (void*)(-1))
+	if ((Pixel*)(-1) == pixels)
 	{
 		return Error_mmap;
 	}
 
+	{
+		Pixel* currentPixel = pixels;
+		for (int y = 0; y < height; ++y)
+		{
+			for (int x = 0; x < width; ++x)
+			{
+				if (y < (height / 3))
+				{
+					currentPixel->r = 255;
+					currentPixel->g = 0;
+					currentPixel->b = 0;
+				}
+				else if (y < (2 * height / 3))
+				{
+					currentPixel->r = 0;
+					currentPixel->g = 255;
+					currentPixel->b = 0;
+				}
+				else
+				{
+					currentPixel->r = 0;
+					currentPixel->g = 0;
+					currentPixel->b = 255;
+				}
+				
+				currentPixel->a = 255;
+				++currentPixel;
+			}
+		}
+	}
 
 	SDL_Texture* texture = SDL_CreateTexture(
 		renderer,
-		SDL_PIXELFORMAT_ARGB8888,
+		SDL_PIXELFORMAT_RGBA8888,
 		SDL_TEXTUREACCESS_STATIC,
 		width, height);
-	if (texture == NULL)
+	if (NULL == texture)
 	{
 		return Error_SDL_CreateTexture;
 	}
 
-	if (SDL_UpdateTexture(
+	if (0 != SDL_UpdateTexture(
 		texture,
-		NULL,
-		memory,
-		width * sizeof(Pixel)) != 0)
+		NULL, // rect
+		pixels,
+		width * sizeof(Pixel))) // pitch
 	{
 		return Error_SDL_UpdateTexture;
 	}
 
+	SDL_Rect renderRect[1] = {0};
+	renderRect->w = width;
+	renderRect->h = height;
+
 	bool app_running = true;
 	while (app_running)
 	{
-		SDL_Event event = {};
-		if (SDL_WaitEvent(&event) == 0)
+		SDL_Event event[1] = {0};
+		if (0 == SDL_WaitEvent(event))
 		{
 			return Error_SDL_WaitEvent;
 		}
 
-		if (event.type == SDL_WINDOWEVENT)
+		if (SDL_WINDOWEVENT == event->type)
 		{
-			if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+			if (SDL_WINDOWEVENT_CLOSE == event->window.event)
 			{
-				SDL_Log("window event: SDL_WINDOWEVENT_CLOSE");
+				printf("window event: SDL_WINDOWEVENT_CLOSE\n");
 				app_running = false;
 			}
 		}
 
-		if (SDL_RenderCopy(renderer, texture, NULL, NULL) != 0)
+		if (0 != SDL_RenderCopy(
+			renderer,
+			texture,
+			renderRect, // srcrect
+			renderRect)) // dstrect
 		{
 			return Error_SDL_RenderCopy;
 		}
@@ -113,6 +153,6 @@ int main(void)
 		SDL_RenderPresent(renderer);
 	}
 
-	SDL_Log("bye bye");
+	printf("bye bye\n");
 	return 0;
 }
