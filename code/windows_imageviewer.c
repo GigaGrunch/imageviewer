@@ -66,29 +66,23 @@ int WinMain(void)
 		{
 			for (int x = 0; x < width; ++x)
 			{
-				switch (y % 3)
+				if (y < (height / 3))
 				{
-					case 0:
-					{
-						currentPixel->r = 255;
-						currentPixel->g = 0;
-						currentPixel->b = 0;
-						break;
-					}
-					case 1:
-					{
-						currentPixel->r = 0;
-						currentPixel->g = 255;
-						currentPixel->b = 0;
-						break;
-					}
-					case 2:
-					{
-						currentPixel->r = 0;
-						currentPixel->g = 0;
-						currentPixel->b = 255;
-						break;
-					}
+					currentPixel->r = 255;
+					currentPixel->g = 0;
+					currentPixel->b = 0;
+				}
+				else if (y < (2 * height / 3))
+				{
+					currentPixel->r = 0;
+					currentPixel->g = 255;
+					currentPixel->b = 0;
+				}
+				else
+				{
+					currentPixel->r = 0;
+					currentPixel->g = 0;
+					currentPixel->b = 255;
 				}
 				
 				currentPixel->a = 255;
@@ -112,6 +106,10 @@ int WinMain(void)
 		return Error_SDL_UpdateTexture;
 	}
 
+	SDL_Rect renderRect[1] = {0};
+	renderRect->w = width;
+	renderRect->h = height;
+
 	bool app_running = true;
 	while (app_running)
 	{
@@ -133,8 +131,8 @@ int WinMain(void)
 		if (0 != SDL_RenderCopy(
 			renderer,
 			texture,
-			NULL, // srcrect
-			NULL)) // dstrect
+			renderRect, // srcrect
+			renderRect)) // dstrect
 		{
 			return Error_SDL_RenderCopy;
 		}
