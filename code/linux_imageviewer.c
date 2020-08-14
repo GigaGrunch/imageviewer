@@ -1,53 +1,70 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <SDL2/SDL.h>
 #include <sys/mman.h>
 
-namespace Error
-{
-	constexpr int SDL_Init = 1;
-	constexpr int SDL_CreateWindow = 2;
-	constexpr int SDL_CreateRenderer = 3;
-	constexpr int mmap = 4;
-	constexpr int SDL_CreateTexture = 5;
-	constexpr int SDL_WaitEvent = 6;
-	constexpr int SDL_RenderCopy = 7;
-	constexpr int SDL_UpdateTexture = 8;
-}
+typedef uint8_t u8;
 
-int main()
+typedef enum
+{
+	Error_mmap,
+
+	Error_SDL_Init,
+	Error_SDL_CreateWindow,
+	Error_SDL_CreateRenderer,
+	Error_SDL_CreateTexture,
+	Error_SDL_WaitEvent,
+	Error_SDL_RenderCopy,
+	Error_SDL_UpdateTexture,
+} Error;
+
+typedef struct
+{
+	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
+} Pixel;
+
+int width = 1024;
+int height = 768;
+
+int main(void)
 {
 	SDL_Log("hello world!");
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
-		return Error::SDL_Init;
+		return Error_SDL_Init;
 	}
 
 	SDL_Window* window = SDL_CreateWindow(
 		"Image Viewer",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		1024, 768,
+		width, height,
 		SDL_WINDOW_RESIZABLE);
-	if (window == nullptr)
+	if (window == NULL)
 	{
-		return Error::SDL_CreateWindow;
+		return Error_SDL_CreateWindow;
 	}
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-	if (renderer == nullptr)
+	if (renderer == NULL)
 	{
-		return Error::SDL_CreateRenderer;
+		return Error_SDL_CreateRenderer;
 	}
 
 	void* memory = mmap(
-		nullptr,
-		1024 * 768 * 4,
+		NULL,
+		width * height * sizeof(Pixel),
 		PROT_READ | PROT_WRITE,
 		MAP_PRIVATE | MAP_ANONYMOUS,
 		-1,
 		0);
 	if (memory == (void*)(-1))
 	{
-		return Error::mmap;
+		return Error_mmap;
 	}
 
 
@@ -55,19 +72,19 @@ int main()
 		renderer,
 		SDL_PIXELFORMAT_ARGB8888,
 		SDL_TEXTUREACCESS_STATIC,
-		1024, 768);
-	if (texture == nullptr)
+		width, height);
+	if (texture == NULL)
 	{
-		return Error::SDL_CreateTexture;
+		return Error_SDL_CreateTexture;
 	}
 
 	if (SDL_UpdateTexture(
 		texture,
-		nullptr,
+		NULL,
 		memory,
-		1024 * 4) != 0)
+		width * sizeof(Pixel)) != 0)
 	{
-		return Error::SDL_UpdateTexture;
+		return Error_SDL_UpdateTexture;
 	}
 
 	bool app_running = true;
@@ -76,7 +93,7 @@ int main()
 		SDL_Event event = {};
 		if (SDL_WaitEvent(&event) == 0)
 		{
-			return Error::SDL_WaitEvent;
+			return Error_SDL_WaitEvent;
 		}
 
 		if (event.type == SDL_WINDOWEVENT)
@@ -88,18 +105,14 @@ int main()
 			}
 		}
 
-		if (SDL_RenderCopy(renderer, texture, nullptr, nullptr) != 0)
+		if (SDL_RenderCopy(renderer, texture, NULL, NULL) != 0)
 		{
-			return Error::SDL_RenderCopy;
+			return Error_SDL_RenderCopy;
 		}
 
 		SDL_RenderPresent(renderer);
 	}
 
-	SDL_DestroyTexture(texture);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
 	SDL_Log("bye bye");
 	return 0;
 }
