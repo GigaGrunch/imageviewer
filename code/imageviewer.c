@@ -5,6 +5,8 @@ int height = 768;
 
 int imageviewer_main(void)
 {
+	printf("now entering platform independent land\n");
+
 	if (0 != SDL_Init(SDL_INIT_VIDEO))
 	{
 		return Error_SDL_Init;

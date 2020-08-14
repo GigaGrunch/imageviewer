@@ -4,10 +4,10 @@
 
 int WinMain(void)
 {
-	printf("hello world!\n");
+	printf("ImageViewer for Windows says 'hello!'\n");
 
 	int result = imageviewer_main();
 
-	printf("bye bye\n");
+	printf("ImageViewer for Windows says 'bye bye'\n");
 	return result;
 }

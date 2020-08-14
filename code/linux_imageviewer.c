@@ -3,10 +3,10 @@
 
 int main(void)
 {
-	printf("hello world!\n");
+	printf("ImageViewer for Linux says 'hello!'\n");
 
 	int result = imageviewer_main();
 
-	printf("bye bye\n");
+	printf("ImageViewer for Linux says 'bye bye'\n");
 	return result;
 }
