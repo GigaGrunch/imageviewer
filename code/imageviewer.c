@@ -1,68 +1,38 @@
 #include "imageviewer.h"
 
+void create_some_pattern(Pixel* pixels); // temp
+SDL_Rect match_preserve_ratio(SDL_Rect rect_to_match, SDL_Rect max_rect);
+
+void InitWindow();
+void InitRenderer();
+void InitTexture();
+void UpdateRenderer();
+void HandleEvent(SDL_Event* event);
+
 int width = 1024;
 int height = 768;
-
-void create_some_pattern(Pixel* pixels);
-SDL_Rect match_preserve_ratio(SDL_Rect rect_to_match, SDL_Rect max_rect);
+bool app_running;
+SDL_Window* window;
+SDL_Renderer* renderer;
+SDL_Texture* texture;
+SDL_Rect source_rect;
+SDL_Rect window_rect;
 
 void imageviewer_main(void)
 {
 	printf("now entering platform independent land\n");
 
-	SDL_Window* window = SDL_CreateWindow(
-		"Image Viewer",
-		SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED,
-		width, height,
-		SDL_WINDOW_RESIZABLE);
-	if (NULL == window)
-	{
-		exit(Error_SDL_CreateWindow);
-	}
+	InitWindow();
+	InitRenderer();
+	InitTexture();
 
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-	if (NULL == renderer)
-	{
-		exit(Error_SDL_CreateRenderer);
-	}
-
-	Pixel* pixels = malloc(width * height * sizeof(Pixel));
-	if (NULL == pixels)
-	{
-		exit(Error_malloc);
-	}
-
-	create_some_pattern(pixels);
-
-	SDL_Texture* texture = SDL_CreateTexture(
-		renderer,
-		SDL_PIXELFORMAT_RGBA32,
-		SDL_TEXTUREACCESS_STATIC,
-		width, height);
-	if (NULL == texture)
-	{
-		exit(Error_SDL_CreateTexture);
-	}
-
-	if (0 != SDL_UpdateTexture(
-		texture,
-		NULL, // rect
-		pixels,
-		width * sizeof(Pixel))) // pitch
-	{
-		exit(Error_SDL_UpdateTexture);
-	}
-
-	SDL_Rect source_rect = {0};
 	source_rect.w = width;
 	source_rect.h = height;
 
-	SDL_Rect window_rect = {0};
 	window_rect.w = width;
 	window_rect.h = height;
 
-	bool app_running = true;
+	app_running = true;
 	while (app_running)
 	{
 		SDL_Event event[1] = {0};
@@ -71,37 +41,8 @@ void imageviewer_main(void)
 			exit(Error_SDL_WaitEvent);
 		}
 
-		if (SDL_WINDOWEVENT == event->type)
-		{
-			switch (event->window.event)
-			{
-				case SDL_WINDOWEVENT_CLOSE:
-				{
-					printf("window event: SDL_WINDOWEVENT_CLOSE\n");
-					app_running = false;
-					break;
-				}
-				case SDL_WINDOWEVENT_RESIZED:
-				{
-					window_rect.w = event->window.data1;
-					window_rect.h = event->window.data2;
-					break;
-				}
-			}
-		}
-
-		SDL_Rect dest_rect = match_preserve_ratio(source_rect, window_rect);
-
-		if (0 != SDL_RenderCopy(
-			renderer,
-			texture,
-			&source_rect, // srcrect
-			&dest_rect)) // dstrect
-		{
-			exit(Error_SDL_RenderCopy);
-		}
-
-		SDL_RenderPresent(renderer);
+		HandleEvent(event);
+		UpdateRenderer();
 	}
 }
 
@@ -125,6 +66,97 @@ SDL_Rect match_preserve_ratio(SDL_Rect rect_to_match, SDL_Rect max_rect)
 	}
 
 	return matching_rect;
+}
+
+void InitWindow()
+{
+	window = SDL_CreateWindow(
+		"Image Viewer",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		width, height,
+		SDL_WINDOW_RESIZABLE);
+	if (NULL == window)
+	{
+		exit(Error_SDL_CreateWindow);
+	}
+}
+
+void InitRenderer()
+{
+	renderer = SDL_CreateRenderer(window, -1, 0);
+	if (NULL == renderer)
+	{
+		exit(Error_SDL_CreateRenderer);
+	}
+}
+
+void InitTexture()
+{
+	Pixel* pixels = malloc(width * height * sizeof(Pixel));
+	if (NULL == pixels)
+	{
+		exit(Error_malloc);
+	}
+
+	create_some_pattern(pixels);
+
+	texture = SDL_CreateTexture(
+		renderer,
+		SDL_PIXELFORMAT_RGBA32,
+		SDL_TEXTUREACCESS_STATIC,
+		width, height);
+	if (NULL == texture)
+	{
+		exit(Error_SDL_CreateTexture);
+	}
+
+	if (0 != SDL_UpdateTexture(
+		texture,
+		NULL, // rect
+		pixels,
+		width * sizeof(Pixel))) // pitch
+	{
+		exit(Error_SDL_UpdateTexture);
+	}
+}
+
+void UpdateRenderer()
+{
+	SDL_Rect dest_rect = match_preserve_ratio(source_rect, window_rect);
+
+	if (0 != SDL_RenderCopy(
+		renderer,
+		texture,
+		&source_rect, // srcrect
+		&dest_rect)) // dstrect
+	{
+		exit(Error_SDL_RenderCopy);
+	}
+
+	SDL_RenderPresent(renderer);
+}
+
+void HandleEvent(SDL_Event* event)
+{
+	if (SDL_WINDOWEVENT == event->type)
+	{
+		switch (event->window.event)
+		{
+			case SDL_WINDOWEVENT_CLOSE:
+			{
+				printf("window event: SDL_WINDOWEVENT_CLOSE\n");
+				app_running = false;
+				break;
+			}
+			case SDL_WINDOWEVENT_RESIZED:
+			{
+				window_rect.w = event->window.data1;
+				window_rect.h = event->window.data2;
+				break;
+			}
+		}
+	}
 }
 
 void create_some_pattern(Pixel* pixels)
