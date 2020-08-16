@@ -14,7 +14,7 @@ fi
 mkdir "$build_dir"
 
 cd "$build_dir"
-cc -g -Wall -o "imageviewer" -l SDL2 "$code_dir/linux_imageviewer.c"
+cc -g -Wall -o "imageviewer" -l SDL2 "$code_dir/linux_sdl_imageviewer.c"
 
 if [ "$1" == "run" ]
 then
