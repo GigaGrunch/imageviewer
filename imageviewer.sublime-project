@@ -16,6 +16,14 @@
 			"shell_cmd": "$folder/linux_sdl_build.sh run"
 		},
 		{
+			"name": "Build Linux Xlib",
+			"shell_cmd": "$folder/linux_xlib_build.sh"
+		},
+		{
+			"name": "Build Linux Xlib & Run",
+			"shell_cmd": "$folder/linux_xlib_build.sh run"
+		},
+		{
 			"name": "Build Windows SDL",
 			"shell_cmd": "$folder/windows_sdl_build.bat"
 		},
