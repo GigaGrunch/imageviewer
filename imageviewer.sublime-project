@@ -1,0 +1,27 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Build Linux SDL",
+			"shell_cmd": "$folder/linux_sdl_build.sh"
+		},
+		{
+			"name": "Build Linux SDL & Run",
+			"shell_cmd": "$folder/linux_sdl_build.sh run"
+		},
+		{
+			"name": "Build Windows SDL",
+			"shell_cmd": "$folder/windows_sdl_build.bat"
+		},
+		{
+			"name": "Build Windows SDL & Run",
+			"shell_cmd": "$folder/windows_sdl_build.bat run"
+		}
+	]
+}
