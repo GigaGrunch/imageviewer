@@ -21,10 +21,10 @@ typedef struct
 {
 	// I actually don't know, why these are inversed.
 	// Something, something, endianness.
-	u8 a;
-	u8 b;
-	u8 g;
 	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
 } Pixel;
 
 int imageviewer_main(void);

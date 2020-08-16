@@ -37,7 +37,7 @@ int imageviewer_main(void)
 
 	SDL_Texture* texture = SDL_CreateTexture(
 		renderer,
-		SDL_PIXELFORMAT_RGBA8888,
+		SDL_PIXELFORMAT_RGBA32,
 		SDL_TEXTUREACCESS_STATIC,
 		width, height);
 	if (NULL == texture)
