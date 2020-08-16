@@ -5,8 +5,8 @@ int main(void)
 {
 	printf("ImageViewer for Linux says 'hello!'\n");
 
-	int result = imageviewer_main();
+	imageviewer_main();
 
 	printf("ImageViewer for Linux says 'bye bye'\n");
-	return result;
+	return 0;
 }

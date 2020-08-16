@@ -6,7 +6,7 @@ int height = 768;
 void create_some_pattern(Pixel* pixels);
 SDL_Rect match_preserve_ratio(SDL_Rect rect_to_match, SDL_Rect max_rect);
 
-int imageviewer_main(void)
+void imageviewer_main(void)
 {
 	printf("now entering platform independent land\n");
 
@@ -18,19 +18,19 @@ int imageviewer_main(void)
 		SDL_WINDOW_RESIZABLE);
 	if (NULL == window)
 	{
-		return Error_SDL_CreateWindow;
+		exit(Error_SDL_CreateWindow);
 	}
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 	if (NULL == renderer)
 	{
-		return Error_SDL_CreateRenderer;
+		exit(Error_SDL_CreateRenderer);
 	}
 
 	Pixel* pixels = malloc(width * height * sizeof(Pixel));
 	if (NULL == pixels)
 	{
-		return Error_malloc;
+		exit(Error_malloc);
 	}
 
 	create_some_pattern(pixels);
@@ -42,7 +42,7 @@ int imageviewer_main(void)
 		width, height);
 	if (NULL == texture)
 	{
-		return Error_SDL_CreateTexture;
+		exit(Error_SDL_CreateTexture);
 	}
 
 	if (0 != SDL_UpdateTexture(
@@ -51,7 +51,7 @@ int imageviewer_main(void)
 		pixels,
 		width * sizeof(Pixel))) // pitch
 	{
-		return Error_SDL_UpdateTexture;
+		exit(Error_SDL_UpdateTexture);
 	}
 
 	SDL_Rect source_rect = {0};
@@ -68,7 +68,7 @@ int imageviewer_main(void)
 		SDL_Event event[1] = {0};
 		if (0 == SDL_WaitEvent(event))
 		{
-			return Error_SDL_WaitEvent;
+			exit(Error_SDL_WaitEvent);
 		}
 
 		if (SDL_WINDOWEVENT == event->type)
@@ -98,13 +98,11 @@ int imageviewer_main(void)
 			&source_rect, // srcrect
 			&dest_rect)) // dstrect
 		{
-			return Error_SDL_RenderCopy;
+			exit(Error_SDL_RenderCopy);
 		}
 
 		SDL_RenderPresent(renderer);
 	}
-
-	return 0;
 }
 
 SDL_Rect match_preserve_ratio(SDL_Rect rect_to_match, SDL_Rect max_rect)

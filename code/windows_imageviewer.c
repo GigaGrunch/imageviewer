@@ -6,8 +6,8 @@ int WinMain(void)
 {
 	printf("ImageViewer for Windows says 'hello!'\n");
 
-	int result = imageviewer_main();
+	imageviewer_main();
 
 	printf("ImageViewer for Windows says 'bye bye'\n");
-	return result;
+	return 0;
 }

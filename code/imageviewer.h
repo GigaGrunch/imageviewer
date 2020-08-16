@@ -7,7 +7,6 @@ typedef uint8_t u8;
 typedef enum
 {
 	Error_malloc = 1,
-
 	Error_SDL_Init,
 	Error_SDL_CreateWindow,
 	Error_SDL_CreateRenderer,
@@ -27,4 +26,4 @@ typedef struct
 	u8 a;
 } Pixel;
 
-int imageviewer_main(void);
+void imageviewer_main(void);
