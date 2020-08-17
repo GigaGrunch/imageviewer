@@ -17,10 +17,10 @@ mkdir %build_dir% || goto :error
 copy %sdl_dir%\lib\SDL2.dll %build_dir% || goto :error
 
 cd %build_dir%
-cl /nologo /Wall /Fe"imageviewer.exe" %code_dir%\windows_imageviewer.c /link %sdl_dir%\lib\SDL2.lib || goto :error
+cl /nologo /Wall /Fe"imageviewer.exe" %code_dir%\windows_sdl_imageviewer.c /link %sdl_dir%\lib\SDL2.lib || goto :error
 
 if "%1" == "run" (
-	imageviewer.exe
+	imageviewer.exe || goto :error
 )
 
 cd %current_dir%
