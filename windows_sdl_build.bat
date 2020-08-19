@@ -1,5 +1,19 @@
 @echo off
 
+where /q cl || (
+	echo 'cl' not in PATH, executing 'vcvarsall x64'
+
+	where /q vcvarsall || (
+		echo 'vcvarsall' not in PATH, exiting
+		goto :error
+	)
+
+	vcvarsall x64
+
+	echo .
+	echo for some reason, the script terminates after running 'vcvarsall', just try to compile again
+)
+
 set current_dir=%cd%
 cd %~dp0
 
