@@ -125,6 +125,7 @@ void UpdateRenderer()
 {
 	SDL_Rect dest_rect = match_preserve_ratio(source_rect, window_rect);
 
+	SDL_RenderClear(renderer, NULL);
 	if (0 != SDL_RenderCopy(
 		renderer,
 		texture,
