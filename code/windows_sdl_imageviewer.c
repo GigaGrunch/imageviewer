@@ -1,4 +1,4 @@
-#include "../../SDL/include/SDL.h"
+#include "../SDL/include/SDL.h"
 #include "imageviewer.c"
 #include "windows.h"
 

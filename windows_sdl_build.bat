@@ -20,7 +20,7 @@ cd %~dp0
 set script_dir=%cd%
 set build_dir=%script_dir%\build
 set code_dir=%script_dir%\code
-set sdl_dir=%script_dir%\..\SDL
+set sdl_dir=%script_dir%\SDL
 
 if exist %build_dir%\ (
 	rmdir /q /s %build_dir% || goto :error
